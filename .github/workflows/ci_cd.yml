@@ -2,7 +2,7 @@ name: CI/CD counter app
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
@@ -20,6 +20,10 @@ jobs:
           REMOTE_HOST: ${{ secrets.EC2_IP }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
+      - name: install npm
+        run: npm install
+      - name: run server
+        run: npm run dev
 
   build:
     runs-on: self-hosted
@@ -34,5 +38,5 @@ jobs:
           key: ${{ secrets.AWS_KKEY_PAIR }}
           script: |
             cd ~/home/ubuntu/actions-runner/_work/fdd/fdd
-            npm install 
+            npm install
             npm run dev
