@@ -29,7 +29,7 @@ jobs:
             USER_NAME : ${{ secrets.USERNAME  }}
 
         run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          sudo echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           scp -o StrictHostKeyChecking=no -i private_key -r ./ ${USER_NAME}@${HOSTNAME}:/home/ubuntu/your-app-directory
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/your-app-directory
