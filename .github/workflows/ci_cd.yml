@@ -7,25 +7,27 @@ on:
 jobs:
   deploy:
     name: Deploy to EC2
-    runs-on: self-hosted
+    runs-on: ubuntu-latest # It can be self-hosted or ubuntu-latest depending on your setup
 
     steps:
       - name: checkout the files
         uses: actions/checkout@v2
 
-      - name: deploy to the server
-        uses: easingthemes/ssh-deploy@main
+      - name: Copy files to the server
+        run: |
+          echo "${{ secrets.AWS_KKEY_PAIR }}" > private_key
+          chmod 600 private_key
+          scp -o StrictHostKeyChecking=no -i private_key -r ./ ${{ secrets.USERNAME }}@${{ secrets.EC2_IP }}:${{ secrets.TARGET_DIR }}
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.AWS_KKEY_PAIR }}
-          REMOTE_HOST: ${{ secrets.EC2_IP }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+          AWS_KKEY_PAIR: ${{ secrets.AWS_KKEY_PAIR }}
+          EC2_IP: ${{ secrets.EC2_IP }}
+          USERNAME: ${{ secrets.USERNAME }}
+          TARGET_DIR: ${{ secrets.TARGET_DIR }}
 
-      - name: go to dir
-        run: cd /home/ubuntu/actions-runner/_work/fdd/fdd
-      - name: install npm
-        run: npm install
-      - name: run server
-        run: npm run dev
-
-
+      - name: Install dependencies and run server
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.USERNAME }}@${{ secrets.EC2_IP }} '
+            cd /home/ubuntu/actions-runner/_work/fdd/fdd
+            npm install
+            npm run dev
+          '
