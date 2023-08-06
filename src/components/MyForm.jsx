@@ -73,7 +73,7 @@ export default function FormDataComponent() {
   return (
     <div style={{backgroundColor: '#171E2E', margin: '30px', padding: '30px', borderRadius: '15px'}}>
       <Typography variant="h2" align="center" sx={{ fontWeight: 'bold' }}>
-        Fraud detection
+        Fraud detection - new
       </Typography>
       <hr></hr>
       <Typography variant="body1" align="left" >
