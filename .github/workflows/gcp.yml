@@ -20,7 +20,7 @@ jobs:
 
       - name: Build React app
         run: |
-          cd /home/ubuntu/actions-runner/_work/fdd/fdd
+          cd /home/yaznzamelaws/actions-runner/_work/fdd/fdd
           npm install
           npm run build
           sudo rm -r /var/www/html/*
