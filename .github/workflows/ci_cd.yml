@@ -25,18 +25,4 @@ jobs:
       - name: run server
         run: npm run dev
 
-  build:
-    runs-on: self-hosted
 
-    steps:
-      - name: Executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@v0.1.4
-
-        with:
-          host: ${{ secrets.EC2_IP }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.AWS_KKEY_PAIR }}
-          script: |
-            cd ~/home/ubuntu/actions-runner/_work/fdd/fdd
-            npm install
-            npm run dev
