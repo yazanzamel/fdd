@@ -1,28 +1,42 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: CI/CD counter app
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ master ]
 
 jobs:
   build:
-
-    runs-on: self-hosted
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
+    - uses: actions/checkout@v2
+
+    - name: Build the docker_compose
+      run: docker-compose up -d --build
+
+    - name: Start the application (dev mode)
+      run: docker-compose exec -T fraud-service npm run dev
+
+  Deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2 
+      - name: Deploy in EC2
+        env:
+            PRIVATE_KEY: ${{ secrets.AWS_KKEY_PAIR }}
+            HOSTNAME: ${{ secrets.EC2_IP }}
+            USER_NAME: ${{ secrets.USERNAME }}
+
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          
+            # Now we have got the access of EC2 and we will start the deploy.
+            cd /home/ubuntu/actions-runner/_work/fdd/fdd
+            git checkout master
+            git fetch --all
+            git reset --hard origin/master
+            git pull origin master
+            docker-compose -f docker-compose.prod.yml up -d --build'
