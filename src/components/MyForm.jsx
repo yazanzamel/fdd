@@ -5,7 +5,7 @@ import { TimePicker } from '@mui/x-date-pickers';
 
 
 const FormLabelStyle = { fontWeight: 'bold' };
-const FormControlStyle = { textAlign: 'left' , color: '#E1E2E4'};
+const FormControlStyle = { textAlign: 'left' , color: 'white'};
 const InputPropStyle = {style: {backgroundColor: '#313742', color: '#E1E2E4'}  }
 const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: '#E1E2E4' };
 
