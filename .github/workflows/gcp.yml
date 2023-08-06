@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     name: Deploy to gcp
-    runs-on: ["self-hosted","instance-1"]
+    runs-on: [self-hosted,instance-1]
 
     steps:
       - name: checkout the files
