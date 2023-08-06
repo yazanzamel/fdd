@@ -2,37 +2,41 @@ name: CI/CD counter app
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: npm install
+    - name: Build the docker_compose
+      run: docker-compose up -d --build
 
-    - name: Build the application
-      run: npm run build
+    - name: Start the application (dev mode)
+      run: docker-compose exec -T fraud-service npm run dev
 
   Deploy:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2 
       - name: Deploy in EC2
         env:
-            PRIVATE_KEY: ${{ secrets.AWS_KKEY_PAIR }}
+            PRIVATE_KEY: ${{ secrets.AWS_KKEY_PAIR  }}
             HOSTNAME : ${{ secrets.EC2_IP }}
             USER_NAME : ${{ secrets.USERNAME  }}
 
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          scp -o StrictHostKeyChecking=no -i private_key -r ./ ${USER_NAME}@${HOSTNAME}:/home/ubuntu/your-app-directory
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            cd /home/ubuntu/your-app-directory
-            npm install
-            npm run dev'
+
+            #Now we have got the access of EC2 and we will start the deploy .
+            cd /home/ubuntu/fdd
+            git checkout master
+            git fetch --all
+            git reset --hard origin/master
+            git pull origin master
+            docker-compose -f docker-compose.prod.yml up -d --build'
