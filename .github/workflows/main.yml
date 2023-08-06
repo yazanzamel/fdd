@@ -26,8 +26,9 @@ jobs:
 
       - name: Install dependencies and run server
         run: |
-          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.USERNAME }}@${{ secrets.EC2_IP }} '
-            cd /home/ubuntu
+           '
+            
+            cd /home/ubuntu/actions-runner/_work/fdd/fdd
             npm install
-            npm run dev
+            npm run build
           '
