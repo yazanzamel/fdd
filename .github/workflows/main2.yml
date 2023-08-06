@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     name: Deploy to EC2
-    runs-on: self-hosted # It can be self-hosted or ubuntu-latest depending on your setup
+    runs-on: self-hosted
 
     steps:
       - name: checkout the files
@@ -16,10 +16,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18' # Or whatever version you need
+          node-version: '18' # or the version you want
 
-      - name: Install dependencies and run server
+      - name: Build React app
         run: |
           cd /home/ubuntu/actions-runner/_work/fdd/fdd
           npm install
-          npm run dev
+          npm run build
+          sudo rm -r /var/www/html/*
+          sudo cp -r dist/* /var/www/html
+          sudo systemctl restart nginx
