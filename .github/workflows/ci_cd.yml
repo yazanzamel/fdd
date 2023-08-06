@@ -31,8 +31,12 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" | sudo tee private_key > /dev/null
           sudo chmod 600 private_key
-          sudo scp -o StrictHostKeyChecking=no -i private_key -r '${{ github.workspace }}' ${USER_NAME}@${HOSTNAME}:/home/ubuntu/actions-runner/_work/fdd/fdd
           sudo ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            cd /home/ubuntu/actions-runner/_work/fdd/fdd
+          #Now we have got the access of EC2 and we will start the deploy .
+            cd /home/ubuntu/CounterApp &&
+            git checkout master &&
+            git fetch --all &&
+            git reset --hard origin/main&&
+            git pull origin main &&
             npm install
             npm run dev'
