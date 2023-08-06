@@ -1,0 +1,28 @@
+name: CI/CD counter app
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to gcp
+    runs-on: instance-1
+
+    steps:
+      - name: checkout the files
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18' # or the version you want
+
+      - name: Build React app
+        run: |
+          cd /home/ubuntu/actions-runner/_work/fdd/fdd
+          npm install
+          npm run build
+          sudo rm -r /var/www/html/*
+          sudo cp -r dist/* /var/www/html
+          sudo systemctl restart nginx
