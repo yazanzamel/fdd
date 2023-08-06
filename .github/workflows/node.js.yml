@@ -2,7 +2,7 @@ name: CI/CD counter app
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
 
   Deploy:
     needs: build
-    runs-on: uself-hosted
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v2 
