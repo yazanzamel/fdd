@@ -3,7 +3,7 @@ name: CI/CD counter app
 on:
   push:
     branches: [ main ]
-    
+
 jobs:
   deploy:
     name: Deploy to EC2
@@ -20,3 +20,20 @@ jobs:
           REMOTE_HOST: ${{ secrets.EC2_IP }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
+
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.AWS_KKEY_PAIR }}
+          script: |
+            cd ~/home/ubuntu/actions-runner/_work/fdd/fdd
+            yarn/npm install
+            yarn/npm build
+            yarn/npm i serve
+            serve -p 3000 build/
