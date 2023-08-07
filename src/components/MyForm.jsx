@@ -124,7 +124,7 @@ export default function FormDataComponent() {
 
       <Container maxWidth="sm" sx={{ py: 3 }}>
       <Typography variant="h2" align="center" sx={{ fontWeight: 'bold', padding: '15px' }}>
-        Fraud detection v3
+        Fraud detection
       </Typography>
       <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
         We've trained a model to predict whether a transaction is a fraud or not <br/>
