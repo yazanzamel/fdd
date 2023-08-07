@@ -1,90 +1,137 @@
-import React, { useState } from 'react';
-import {Button, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Select, MenuItem, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {Button, Container, FormControl,Slider, FormControlLabel, FormLabel, Radio, RadioGroup, Select, MenuItem, TextField, Typography } from '@mui/material';
 import axios from 'axios';
-import { TimePicker } from '@mui/x-date-pickers';
+import { CircularProgress } from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import dayjs from 'dayjs'
 
 
 const FormLabelStyle = { fontWeight: 'bold' };
-const FormControlStyle = { textAlign: 'left' , color: 'white'};
+const FormControlStyle = { textAlign: 'left' , color: '#E1E2E4'};
 const InputPropStyle = {style: {backgroundColor: '#313742', color: '#E1E2E4'}  }
 const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: '#E1E2E4' };
 
 export default function FormDataComponent() {
+
   const [response, setResponse] = useState(null);
+  const [loading,setLoading] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formData, setFormData] = useState({
     amt: '',
-    gender: 1,
-    hour: '',
+    time: dayjs(),
     age: '',
     category: 1,
   });
 
+
   const handleChange = (event) => {
     const { name, value } = event.target;
+    console.log(value)
     setFormData((prevData) => ({
       ...prevData,
       [name]: parseFloat(value),
     }));
   };
 
-  const isInputValid = (value) => parseFloat(value) > 0;
+  
+  const handleTime = (value) => {
+    setFormData((prevData) => (
+      {
+      ...prevData,
+      time: dayjs(value).toDate(),
+    }))
+  }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (!isInputValid(formData.amt) || !isInputValid(formData.hour) || !isInputValid(formData.age)) {
-      // If any of the inputs are invalid, do not submit the form
-      alert('Please enter valid values for all fields.');
-      return;
+  function isInputValid(value,name){
+    if(name === 'amt'){
+      return parseFloat(value) > 0;
     }
-    console.log(formData);
+    if(name === 'age'){
+      return (parseInt(value) > 0 && parseInt(value) < 120) 
+    }
+    if(name === 'time'){
+      return (parseInt(value) >= 0 && parseInt(value) <= 24)
+    }
+    return false
+  };
 
+
+  function handleSubmit(event){
+
+
+    event.preventDefault();
+    setFormSubmitted(true);
+  
+    if (!isInputValid(formData.amt,'amt') || !isInputValid(formData.age,'age')) {
+      // If any of the inputs are invalid, do not submit the form
+      console.log("INVALID")
+      return;
+    }    
+    setLoading(true)
+    let timeInDate = formData.time;
+    if (dayjs.isDayjs(formData.time)) {
+      // Convert the dayjs object to a Date object
+      timeInDate = formData.time.toDate();
+    }
+  // Create a new object with the converted time field
+  const formDataToSend = { ...formData, time: timeInDate };
+  console.log(formDataToSend)
     const apiEndpoint = 'http://127.0.0.1:8000/predict';
     axios
-      .post(apiEndpoint, formData)
+      .post(apiEndpoint, formDataToSend, {
+        headers: {
+          'Content-Type': 'application/json',
+        }})
       .then((response) => {
         console.log('API response:', response.data);
-        //TODO: handle response and present it to the user
         setResponse(response.data);
       })
       .catch((error) => {
         console.error('API error:', error);
-      });
+      }).finally(setLoading(false));
+      
+    setFormSubmitted(true);
   };
 
-  const desc = {
-    'personal_care': 1,
-    'health_fitness': 2,
-    'misc_pos': 3,
-    'travel': 4,
-    'kids_pets': 5,
-    'shopping_pos': 6,
-    'food_dining': 7,
-    'home': 8,
-    'entertainment': 9,
-    'shopping_net': 10,
-    'misc_net': 11,
-    'grocery_pos': 12,
-    'gas_transport': 13,
-    'grocery_net': 14,
-  };
+  
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const apiEndpoint = 'http://127.0.0.1:8000/category';
+    axios
+      .get(apiEndpoint)
+      .then((response) => {
+        const data = response.data.categories;
+        setCategories(Object.entries(data)); // Convert the object to an array of key-value pairs
+      })
+      .catch((error) => {
+        console.error('API error:', error);
+      });
+  }, []);
+
+  
+
 
   return (
     <div style={{backgroundColor: '#171E2E', margin: '30px', padding: '30px', borderRadius: '15px'}}>
+
+      <Container maxWidth="sm" sx={{ py: 3 }}>
       <Typography variant="h2" align="center" sx={{ fontWeight: 'bold' }}>
-        Fraud Detection
+        No Title
       </Typography>
       <hr></hr>
-      <Typography variant="body1" align="left" >
+      <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
         We've trained a model to predict whether a transaction is a fraud or not <br/>
         based on testing and evaluating, we've concluded that these are the most important factors which <br/>
         indicates whether its a fradulant transaction or not  
       </Typography>
+
       <hr></hr>
-      <Container maxWidth="sm" sx={{ py: 2 }}>
+
         <form onSubmit={handleSubmit}>
           <FormControl fullWidth variant="outlined" sx={FormControlStyle}>
+
             <FormLabel sx={labelStyle}>Amount</FormLabel>
             <TextField
               id="filled"
@@ -95,26 +142,9 @@ export default function FormDataComponent() {
               onChange={handleChange}
               InputLabelProps={{ style: FormLabelStyle }}
               InputProps={InputPropStyle}
-              error={!isInputValid(formData.amt)}
-              helperText={!isInputValid(formData.amt) ? 'Invalid amount' : ''}
-              placeholder="Enter the amount"
-            />
-          </FormControl>
-          <FormControl fullWidth variant="outlined" sx={FormControlStyle}>
-            <FormLabel sx={labelStyle}>Time of the transaction</FormLabel>
-            <TextField
-              id="filled"
-              fullWidth
-              required
-              type="number"
-              name="hour"
-              value={formData.hour}
-              onChange={handleChange}
-              InputProps={InputPropStyle}
-              InputLabelProps={{ style: FormLabelStyle }}
-              error={!isInputValid(formData.hour)}
-              helperText={!isInputValid(formData.hour) ? 'Invalid time' : ''}
-              placeholder="Enter the time"
+              error={formSubmitted && !isInputValid(formData.amt, 'amt')}
+              helperText={formSubmitted && !isInputValid(formData.amt,'amt') ? 'amount must be bigger than 0 ' : ''}
+              placeholder="Enter the amount of the transaction"
             />
           </FormControl>
           <FormControl fullWidth variant="outlined" sx={FormControlStyle}>
@@ -129,72 +159,61 @@ export default function FormDataComponent() {
               InputProps={InputPropStyle}
               onChange={handleChange}
               InputLabelProps={{ style: FormLabelStyle }}
-              error={!isInputValid(formData.age)}
-              helperText={!isInputValid(formData.age) ? 'Invalid age' : ''}
+              error={formSubmitted &&!isInputValid(formData.age,'age')}
+              helperText={formSubmitted &&!isInputValid(formData.age,'age') ? 'age must be between 1 & 110' : ''}
               sx={{ '& .MuiFilledInput-root': { marginTop: '15px' } }}
-              placeholder="Enter the age"
+              placeholder="Age of transaction doer"
             />
           </FormControl>
+          <FormControl  variant="filled" sx={FormControlStyle}>
           
-          <FormControl fullWidth variant="outlined" sx={{ textAlign: 'left' }}>
-            <FormLabel sx={labelStyle}>Gender</FormLabel>
-            <RadioGroup
-              row
-              required
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-            >
-              <FormControlLabel value="1" control={<Radio />} label="Male" />
-              <FormControlLabel value="2" control={<Radio />} label="Female" />
-            </RadioGroup>
+          <FormLabel sx={labelStyle}>Time of the transaction</FormLabel>
+          <DateTimePicker
+            value={formData.time}
+            fullWidth
+            
+            id="filled"
+            onChange={handleTime}
+            
+          />
           </FormControl>
 
-          <FormControl fullWidth variant="outlined" sx={{ textAlign: 'left' }}>
+          <FormControl fullWidth variant="filled" sx={{ textAlign: 'left' }}>
             <FormLabel sx={labelStyle}>Purchase Category</FormLabel>
             <Select
-              size="small"
+            disableUnderline
+            id='outlined'
+              size="large"
               name="category"
               value={formData.category}
               onChange={handleChange}
               label="Category"
               sx={{ outlineColor: 'white', color:'white'}}
-              placeholder="Select a category"
+              placeholder="Select a category of the purchase"
             >
-              {Object.keys(desc).map((key) => (
-                <MenuItem key={desc[key]} value={desc[key]}>
-                  {key.replace("_", " ")}
-                </MenuItem>
-              ))}
+                        {categories.map(([id, name]) => (
+            <MenuItem key={id} value={id}>
+              {name}
+            </MenuItem>
+          ))}
             </Select>
           </FormControl>
-
-          {/* <FormControl fullWidth>
-            <FormLabel sx={labelStyle}>Hour of the Transaction</FormLabel>
-          <TimePicker 
-
-              value={formData.hour ? LuxonDateTime.fromObject({ hour: formData.hour }) : null}
-              views={['hours']}
-              onChange={() => console.log(formData.hour)}
-          >
-          </TimePicker>
-          
-          </FormControl> */}
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black',}}>
             Detect
           </Button>
         </form>
-        {response !== null && (
-          <div>
-            <Typography variant="h5">
-              Result: {JSON.parse(response.prediction) === 0 ? "Not a Fraud" : "Fraud"}
-            </Typography>
-          </div>
-        )}
+        {loading ? ( 
+      <CircularProgress />
+    ) : (
+      response !== null && ( 
+      <div>
+          <Typography variant="h5">
+            Result: {response.is_fraud === 0 ? "Not a Fraud" : "Fraud"}
+          </Typography>
+        </div>
+      )
+    )}
       </Container>
     </div>
   );
 };
-
-
-
