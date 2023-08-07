@@ -80,7 +80,7 @@ export default function FormDataComponent() {
     }
   const formDataToSend = { ...formData, transaction_time: timeInDate };
   console.log(formDataToSend)
-    const apiEndpoint = 'http://127.0.0.1:8000/predict';
+    const apiEndpoint = 'http://3.89.115.102:8000/predict';
     axios
       .post(apiEndpoint, formDataToSend, {
         headers: {
@@ -104,7 +104,7 @@ export default function FormDataComponent() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const apiEndpoint = 'http://127.0.0.1:8000/category';
+    const apiEndpoint = 'http://3.89.115.102:8000/category';
     axios
       .get(apiEndpoint)
       .then((response) => {
