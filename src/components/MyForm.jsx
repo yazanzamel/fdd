@@ -77,7 +77,7 @@ export default function FormDataComponent() {
   // Create a new object with the converted time field
   const formDataToSend = { ...formData, time: timeInDate };
   console.log(formDataToSend)
-    const apiEndpoint = 'http://127.0.0.1:8000/predict';
+    const apiEndpoint = 'http://44.202.42.218:8000/predict';
     axios
       .post(apiEndpoint, formDataToSend, {
         headers: {
@@ -98,7 +98,7 @@ export default function FormDataComponent() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const apiEndpoint = 'http://127.0.0.1:8000/category';
+    const apiEndpoint = 'http://44.202.42.218:8000/category';
     axios
       .get(apiEndpoint)
       .then((response) => {
