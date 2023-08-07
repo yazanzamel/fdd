@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import {Button, Container, FormControl,Slider, FormControlLabel, FormLabel, Radio, RadioGroup, Select, MenuItem, TextField, Typography } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@mui/material';
 import axios from 'axios';
 import { CircularProgress } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import dayjs from 'dayjs'
 
+import { renderTimeViewClock } from '@mui/x-date-pickers';
 
 const FormLabelStyle = { fontWeight: 'bold' };
-const FormControlStyle = { textAlign: 'left' , color: '#E1E2E4'};
-const InputPropStyle = {style: {backgroundColor: '#313742', color: '#E1E2E4'}  }
-const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: '#E1E2E4' };
+const FormControlStyle = { textAlign: 'left' };
+const InputPropStyle = {style: {color: 'white'}  }
+const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: 'white' };
 
 export default function FormDataComponent() {
-
-  const [response, setResponse] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [loading,setLoading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
@@ -24,6 +25,10 @@ export default function FormDataComponent() {
     category: 1,
   });
 
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+  
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -39,7 +44,7 @@ export default function FormDataComponent() {
     setFormData((prevData) => (
       {
       ...prevData,
-      transaction_time: dayjs(value).toDate(),
+      transaction_time: dayjs(value).toDate().toString(),
     }))
   }
 
@@ -48,12 +53,15 @@ export default function FormDataComponent() {
       return parseFloat(value) > 0;
     }
     if(name === 'age'){
-      return (parseInt(value) > 0 && parseInt(value) < 120) 
+      return (parseInt(value) >= 18 && parseInt(value) < 120) 
     }
     return false
   };
 
 
+  
+  const [response, setResponse] = useState(null);
+  
   function handleSubmit(event){
 
 
@@ -77,11 +85,14 @@ export default function FormDataComponent() {
       .post(apiEndpoint, formDataToSend, {
         headers: {
           'Content-Type': 'application/json',
+          
         }})
-      .then((response) => {
-        console.log('API response:', response.data);
-        setResponse(response.data);
-      })
+        .then((response) => {
+          console.log('API response:', response.data);
+          setResponse(response.data);
+          handleOpenDialog(); // Open the dialog when you have the response
+        })
+        
       .catch((error) => {
         console.error('API error:', error);
       }).finally(setLoading(false));
@@ -112,10 +123,9 @@ export default function FormDataComponent() {
     <div style={{backgroundColor: '#171E2E', margin: '30px', padding: '30px', borderRadius: '15px'}}>
 
       <Container maxWidth="sm" sx={{ py: 3 }}>
-      <Typography variant="h2" align="center" sx={{ fontWeight: 'bold' }}>
-        Fraud detection
+      <Typography variant="h2" align="center" sx={{ fontWeight: 'bold', padding: '15px' }}>
+        Fraud detection v3
       </Typography>
-      <hr></hr>
       <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
         We've trained a model to predict whether a transaction is a fraud or not <br/>
         based on testing and evaluating, we've concluded that these are the most important factors which <br/>
@@ -155,15 +165,22 @@ export default function FormDataComponent() {
               onChange={handleChange}
               InputLabelProps={{ style: FormLabelStyle }}
               error={formSubmitted &&!isInputValid(formData.age,'age')}
-              helperText={formSubmitted &&!isInputValid(formData.age,'age') ? 'age must be between 1 & 110' : ''}
+              helperText={formSubmitted &&!isInputValid(formData.age,'age') ? 'age must be between 18 & 110' : ''}
               sx={{ '& .MuiFilledInput-root': { marginTop: '15px' } }}
-              placeholder="Age of transaction doer"
+              placeholder="Age of the credit card holder"
             />
           </FormControl>
           <FormControl  variant="filled" sx={FormControlStyle}>
           
           <FormLabel sx={labelStyle}>Time of the transaction</FormLabel>
           <DateTimePicker
+            viewRenderers={
+              {
+                hours: renderTimeViewClock,
+                minutes: renderTimeViewClock,
+                seconds: renderTimeViewClock,
+              }
+            }
             value={formData.transaction_time}
             fullWidth
             
@@ -173,39 +190,46 @@ export default function FormDataComponent() {
           />
           </FormControl>
 
-          <FormControl fullWidth variant="filled" sx={{ textAlign: 'left' }}>
+          <FormControl fullWidth variant="outlined" sx={{ textAlign: 'left' }}>
             <FormLabel sx={labelStyle}>Purchase Category</FormLabel>
             <Select
-            disableUnderline
-            id='outlined'
+            id="filled"
               size="large"
               name="category"
               value={formData.category}
               onChange={handleChange}
               label="Category"
-              sx={{ outlineColor: 'white', color:'white'}}
+              sx={{color:'white'}}
               placeholder="Select a category of the purchase"
             >
-                        {categories.map(([id, name]) => (
-            <MenuItem key={id} value={id}>
+            {categories.map(([id, name]) => (
+            <MenuItem key={id} value={id} >
               {name}
             </MenuItem>
           ))}
             </Select>
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black',}}>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black', fontWeight: 'bold', fontSize: '20px'}}>
             Detect
           </Button>
         </form>
+        
         {loading ? ( 
       <CircularProgress />
     ) : (
       response !== null && ( 
-      <div>
-          <Typography variant="h5">
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
+        <DialogTitle style={{fontSize: '25px'}}>Transaction Result</DialogTitle>
+        <DialogContent>
+          <DialogContentText style={{fontSize: '25px'}}>
             Result: {response.is_fraud === 0 ? "Not a Fraud" : "Fraud"}
-          </Typography>
-        </div>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
       )
     )}
       </Container>
