@@ -114,14 +114,14 @@ export default function FormDataComponent() {
 
 
   return (
-    <div style={{backgroundColor: '#171E2E', margin: '30px', padding: '30px', borderRadius: '15px'}}>
+    <div style={{backgroundColor: 'red', margin: '30px', padding: '30px', borderRadius: '15px'}}>
 
       <Container maxWidth="sm" sx={{ py: 3 }}>
       <Typography variant="h2" align="center" sx={{ fontWeight: 'bold' }}>
         No Title
       </Typography>
       <hr></hr>
-      <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
+      <Typography variant="body1"  align="left" style={{color: "pink"}} >
         We've trained a model to predict whether a transaction is a fraud or not <br/>
         based on testing and evaluating, we've concluded that these are the most important factors which <br/>
         indicates whether its a fradulant transaction or not  
@@ -198,7 +198,7 @@ export default function FormDataComponent() {
           ))}
             </Select>
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black',}}>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'orange',}}>
             Detect
           </Button>
         </form>
