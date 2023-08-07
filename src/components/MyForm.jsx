@@ -7,9 +7,9 @@ import dayjs from 'dayjs'
 
 
 const FormLabelStyle = { fontWeight: 'bold' };
-const FormControlStyle = { textAlign: 'left' , color: 'blue'};
-const InputPropStyle = {style: {backgroundColor: '#313742', color: 'red'}  }
-const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: 'yellow' };
+const FormControlStyle = { textAlign: 'left' , color: '#E1E2E4'};
+const InputPropStyle = {style: {backgroundColor: '#313742', color: '#E1E2E4'}  }
+const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: '#E1E2E4' };
 
 export default function FormDataComponent() {
 
@@ -19,7 +19,7 @@ export default function FormDataComponent() {
 
   const [formData, setFormData] = useState({
     amt: '',
-    time: dayjs(),
+    transaction_time: dayjs(),
     age: '',
     category: 1,
   });
@@ -39,7 +39,7 @@ export default function FormDataComponent() {
     setFormData((prevData) => (
       {
       ...prevData,
-      time: dayjs(value).toDate(),
+      transaction_time: dayjs(value).toDate(),
     }))
   }
 
@@ -49,9 +49,6 @@ export default function FormDataComponent() {
     }
     if(name === 'age'){
       return (parseInt(value) > 0 && parseInt(value) < 120) 
-    }
-    if(name === 'time'){
-      return (parseInt(value) >= 0 && parseInt(value) <= 24)
     }
     return false
   };
@@ -69,15 +66,13 @@ export default function FormDataComponent() {
       return;
     }    
     setLoading(true)
-    let timeInDate = formData.time;
-    if (dayjs.isDayjs(formData.time)) {
-      // Convert the dayjs object to a Date object
-      timeInDate = formData.time.toDate();
+    let timeInDate = formData.transaction_time;
+    if (dayjs.isDayjs(formData.transaction_time)) {
+      timeInDate = formData.transaction_time.toDate().toString();
     }
-  // Create a new object with the converted time field
-  const formDataToSend = { ...formData, time: timeInDate };
+  const formDataToSend = { ...formData, transaction_time: timeInDate };
   console.log(formDataToSend)
-    const apiEndpoint = 'http://44.202.42.218:8000/predict';
+    const apiEndpoint = 'http://127.0.0.1:8000/predict';
     axios
       .post(apiEndpoint, formDataToSend, {
         headers: {
@@ -98,7 +93,7 @@ export default function FormDataComponent() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const apiEndpoint = 'http://44.202.42.218:8000/category';
+    const apiEndpoint = 'http://127.0.0.1:8000/category';
     axios
       .get(apiEndpoint)
       .then((response) => {
@@ -114,14 +109,14 @@ export default function FormDataComponent() {
 
 
   return (
-    <div style={{backgroundColor: 'red', margin: '30px', padding: '30px', borderRadius: '15px'}}>
+    <div style={{backgroundColor: '#171E2E', margin: '30px', padding: '30px', borderRadius: '15px'}}>
 
       <Container maxWidth="sm" sx={{ py: 3 }}>
       <Typography variant="h2" align="center" sx={{ fontWeight: 'bold' }}>
-        No Title
+        Fraud detection
       </Typography>
       <hr></hr>
-      <Typography variant="body1"  align="left" style={{color: "pink"}} >
+      <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
         We've trained a model to predict whether a transaction is a fraud or not <br/>
         based on testing and evaluating, we've concluded that these are the most important factors which <br/>
         indicates whether its a fradulant transaction or not  
@@ -169,7 +164,7 @@ export default function FormDataComponent() {
           
           <FormLabel sx={labelStyle}>Time of the transaction</FormLabel>
           <DateTimePicker
-            value={formData.time}
+            value={formData.transaction_time}
             fullWidth
             
             id="filled"
@@ -198,7 +193,7 @@ export default function FormDataComponent() {
           ))}
             </Select>
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'orange',}}>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black',}}>
             Detect
           </Button>
         </form>
