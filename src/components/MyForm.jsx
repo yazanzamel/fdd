@@ -7,9 +7,9 @@ import dayjs from 'dayjs'
 
 
 const FormLabelStyle = { fontWeight: 'bold' };
-const FormControlStyle = { textAlign: 'left' , color: '#E1E2E4'};
-const InputPropStyle = {style: {backgroundColor: '#313742', color: '#E1E2E4'}  }
-const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: '#E1E2E4' };
+const FormControlStyle = { textAlign: 'left' , color: 'blue'};
+const InputPropStyle = {style: {backgroundColor: '#313742', color: 'red'}  }
+const labelStyle = { fontWeight: 'bold', fontSize: '1.2rem', paddingTop: '20px', color: 'yellow' };
 
 export default function FormDataComponent() {
 
