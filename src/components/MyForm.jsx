@@ -122,7 +122,7 @@ export default function FormDataComponent() {
     <div style={{backgroundColor: '#141414', margin: '30px', padding: '30px', borderRadius: '15px'}}>
 
       <Container maxWidth="sm" sx={{ py: 3 }}>
-      <Typography variant="h2" align="center" sx={{ fontWeight: 'bold', padding: '15px' }}>
+      <Typography variant="h2" align="center" sx={{ fontWeight: 'bold', padding: '15px', color: 'white' }}>
         Fraud detection
       </Typography>
       <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
