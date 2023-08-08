@@ -85,7 +85,6 @@ export default function FormDataComponent() {
       .post(apiEndpoint, formDataToSend, {
         headers: {
           'Content-Type': 'application/json',
-          
         }})
         .then((response) => {
           console.log('API response:', response.data);
@@ -120,11 +119,11 @@ export default function FormDataComponent() {
 
 
   return (
-    <div style={{backgroundColor: '#171E2E', margin: '30px', padding: '30px', borderRadius: '15px'}}>
+    <div style={{backgroundColor: '#141414', margin: '30px', padding: '30px', borderRadius: '15px'}}>
 
       <Container maxWidth="sm" sx={{ py: 3 }}>
       <Typography variant="h2" align="center" sx={{ fontWeight: 'bold', padding: '15px' }}>
-        Fraud detection v3
+        Fraud detection
       </Typography>
       <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
         We've trained a model to predict whether a transaction is a fraud or not <br/>
@@ -132,8 +131,7 @@ export default function FormDataComponent() {
         indicates whether its a fradulant transaction or not  
       </Typography>
 
-      <hr></hr>
-
+      <hr style={{height:"1px",borderWidth:"0", color:"gray",backgroundColor:"grey"}}></hr>
         <form onSubmit={handleSubmit}>
           <FormControl fullWidth variant="outlined" sx={FormControlStyle}>
 
@@ -209,7 +207,9 @@ export default function FormDataComponent() {
           ))}
             </Select>
           </FormControl>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black', fontWeight: 'bold', fontSize: '20px'}}>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black',  fontSize: '20px', backgroundColor: '#FFFFFF', '&:hover': {
+      backgroundColor: '#a3a2a2', color: 'white'
+    },}} >
             Detect
           </Button>
         </form>
