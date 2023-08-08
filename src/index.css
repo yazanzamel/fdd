@@ -1,4 +1,3 @@
-background color in index.css file:
 :root {
 
   line-height: 1.5;
@@ -29,26 +28,4 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
-
--------------
-div color (اول اشي تحت ال return بالكود)
-  return (
-    <div style={{backgroundColor: '#141414', margin: '30px', padding: '30px', borderRadius: '15px'}}>
-
-------------------
-
-
-hr tag in MyForm.jsx
-      <hr style={{height:"1px",borderWidth:"0", color:"gray",backgroundColor:"grey"}}></hr>
-
---------------
-
-button tag 
-
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black',  fontSize: '20px', backgroundColor: '#FFFFFF', '&:hover': {
-      backgroundColor: '#a3a2a2', color: 'white'
-    },}} >
-            Detect
-          </Button>
 
