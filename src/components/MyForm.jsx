@@ -80,7 +80,7 @@ export default function FormDataComponent() {
     }
   const formDataToSend = { ...formData, transaction_time: timeInDate };
   console.log(formDataToSend)
-    const apiEndpoint = 'backend-alb-81524781.us-east-1.elb.amazonaws.com';
+    const apiEndpoint = '3.82.174.195/predict';
     axios
       .post(apiEndpoint, formDataToSend, {
         headers: {
@@ -103,7 +103,7 @@ export default function FormDataComponent() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const apiEndpoint = 'backend-alb-81524781.us-east-1.elb.amazonaws.com';
+    const apiEndpoint = '3.82.174.195/category';
     axios
       .get(apiEndpoint)
       .then((response) => {
