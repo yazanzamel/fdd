@@ -80,7 +80,7 @@ export default function FormDataComponent() {
     }
   const formDataToSend = { ...formData, transaction_time: timeInDate };
   console.log(formDataToSend)
-    const apiEndpoint = 'http://54.234.85.174:8000/predict';
+    const apiEndpoint = 'backend-alb-81524781.us-east-1.elb.amazonaws.com';
     axios
       .post(apiEndpoint, formDataToSend, {
         headers: {
@@ -104,7 +104,7 @@ export default function FormDataComponent() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const apiEndpoint = 'http://54.234.85.174:8000/category';
+    const apiEndpoint = 'backend-alb-81524781.us-east-1.elb.amazonaws.com';
     axios
       .get(apiEndpoint)
       .then((response) => {
@@ -124,7 +124,7 @@ export default function FormDataComponent() {
 
       <Container maxWidth="sm" sx={{ py: 3 }}>
       <Typography variant="h2" align="center" sx={{ fontWeight: 'bold', padding: '15px' }}>
-        Fraud detection
+        Fraud detection v3
       </Typography>
       <Typography variant="body1"  align="left" style={{color: "#D0D0D0"}} >
         We've trained a model to predict whether a transaction is a fraud or not <br/>
