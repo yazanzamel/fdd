@@ -1,11 +1,12 @@
+background color in index.css file:
 :root {
 
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #3A434F;
+  
+  background-color: #333333;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -21,10 +22,33 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+
+-------------
+div color (اول اشي تحت ال return بالكود)
+  return (
+    <div style={{backgroundColor: '#141414', margin: '30px', padding: '30px', borderRadius: '15px'}}>
+
+------------------
+
+
+hr tag in MyForm.jsx
+      <hr style={{height:"1px",borderWidth:"0", color:"gray",backgroundColor:"grey"}}></hr>
+
+--------------
+
+button tag 
+
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 2 ,color: 'black',  fontSize: '20px', backgroundColor: '#FFFFFF', '&:hover': {
+      backgroundColor: '#a3a2a2', color: 'white'
+    },}} >
+            Detect
+          </Button>
 
